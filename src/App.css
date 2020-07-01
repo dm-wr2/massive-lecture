@@ -28,6 +28,7 @@ button {
 .avenger-flex {
   margin-top: 10vh;
   display: flex;
+  flex-wrap: wrap;
 }
 
 .avenger-box {

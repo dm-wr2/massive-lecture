@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from 'axios';
 import AvengerDisplay from './Components/AvengerDisplay';
 import './App.css';
 
@@ -6,14 +7,27 @@ class App extends React.Component {
   constructor(props){
     super(props);
     this.state = {
-      avengers: [
-        {avenger_id: 1, name: 'Iron Man', superPower: 'Super Suit'},
-        {avenger_id: 2, name: 'Thor', superPower: 'Thunder and stuff'}
-      ],
+      avengers: [],
       nameInput: '',
       superInput: '',
       addView: false
     }
+  }
+
+  componentDidMount(){
+    this.getAvengers();
+  }
+  
+  getAvengers = () => {    
+    axios.get('/api/avengers')
+    .then(res => this.setState({avengers: res.data}))
+    .catch(err => console.log(err))
+  }
+
+  addAvenger = () => {
+    axios.post('/api/avenger', {name: this.state.nameInput, superPower: this.state.superInput})
+    .then(() => this.getAvengers())
+    .catch(err => console.log(err))
   }
 
   toggleView = () => {
@@ -31,7 +45,7 @@ class App extends React.Component {
         <button onClick={this.toggleView}>Add Avenger</button>
         <div className='avenger-flex'>
           {this.state.avengers.map(avenger => (
-            <AvengerDisplay key={avenger.avenger_id} avenger={avenger} />
+            <AvengerDisplay key={avenger.avenger_id} avenger={avenger} avengerFn={this.getAvengers}/>
           ))}
         </div>
         {this.state.addView
@@ -49,7 +63,7 @@ class App extends React.Component {
                 value={this.state.superInput} 
                 placeholder='Super Power'
                 onChange={e => this.handleInput(e)}/>
-              <button>Add</button>
+              <button onClick={this.addAvenger}>Add</button>
               <button onClick={this.toggleView}>Cancel</button>
             </section>
           </div>
